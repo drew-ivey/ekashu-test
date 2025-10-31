@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/sha1.js"></script>
+    <title>Panda Checkout</title>
+  </head>
+  <body>
+    <form id="eKashuForm" action="https://test.ekashu.com" method="POST">
+      <input
+        type="hidden"
+        name="ekashu_seller_id"
+        id="ekashu_seller_id"
+        value="99982994"
+      />
+      <input
+        type="hidden"
+        name="ekashu_seller_key"
+        id="ekashu_seller_key"
+        value="1cZ6Jjm3"
+      />
+      <input
+        type="hidden"
+        name="ekashu_reference"
+        id="ekashu_reference"
+        value="10000075"
+      />
+      <input
+        type="hidden"
+        name="ekashu_amount"
+        id="ekashu_amount"
+        value="5.00"
+      />
+      <input
+        type="hidden"
+        name="ekashu_hash_code"
+        id="ekashu_hash_code"
+        value=""
+      />
+      <input
+        type="hidden"
+        name="ekashu_currency"
+        id="ekashu_currency"
+        value="USD"
+      />
+      <input type="submit" value="Pay" />
+    </form>
+
+    <script>
+      const hashKey = "JSUbHPsWnBJ2GT76";
+
+      const hash_input = {
+        ekashu_3d_secure_verify: "",
+        ekashu_amount: document.getElementById("ekashu_amount").value,
+        ekashu_amount_format: "",
+        ekashu_auto_confirm: "",
+        ekashu_callback_failure_url: "",
+        ekashu_callback_include_post: "",
+        ekashu_callback_success_url: "",
+        ekashu_card_address_editable: "",
+        ekashu_card_address_required: "",
+        ekashu_card_address_verify: "",
+        ekashu_card_email_address_mandatory: "",
+        ekashu_card_phone_number_mandatory: "",
+        ekashu_card_title_mandatory: "",
+        ekashu_card_zip_code_verify: "",
+        ekashu_currency: document.getElementById("ekashu_currency").value,
+        ekashu_delivery_address_editable: "",
+        ekashu_delivery_address_required: "",
+        ekashu_delivery_email_address_mandatory: "",
+        ekashu_delivery_phone_number_mandatory: "",
+        ekashu_delivery_title_mandatory: "",
+        ekashu_description: "",
+        ekashu_device: "",
+        ekashu_duplicate_check: "",
+        ekashu_duplicate_minutes: "",
+        ekashu_failure_return_text: "Something went wrong",
+        ekashu_failure_url: "",
+        ekashu_hash_code_format: "",
+        ekashu_hash_code_type: "SHA256HMAC",
+        ekashu_hash_code_version: "2.0.0",
+        ekashu_include_post: true,
+        ekashu_invoice_address_editable: "",
+        ekashu_invoice_address_required: "",
+        ekashu_invoice_email_address_mandatory: "",
+        ekashu_invoice_phone_number_mandatory: "",
+        ekashu_invoice_title_mandatory: "",
+        ekashu_locale: "",
+        ekashu_payment_methods: "",
+        ekashu_reference: document.getElementById("ekashu_reference").value,
+        ekashu_request_type: "",
+        ekashu_return_text: "",
+        ekashu_seller_address: "",
+        ekashu_seller_id: document.getElementById("ekashu_seller_id").value,
+        ekashu_seller_email_address: "",
+        ekashu_seller_key: document.getElementById("ekashu_seller_key").value,
+        ekashu_seller_name: "",
+        ekashu_shortcut_icon: "",
+        ekashu_style_sheet: "",
+        ekashu_success_url: "",
+        ekashu_title: "",
+        ekashu_verification_value_mask: "",
+        ekashu_verification_value_verify: "",
+        ekashu_viewport: "",
+      };
+
+      let hashedData = "";
+
+      Object.keys(hash_input)
+        .sort()
+        .forEach((key) => {
+          var form = document.getElementById("eKashuForm");
+
+          const value = hash_input[key];
+          hashedData += value + "&";
+
+          var hiddenInput = document.createElement("input");
+          hiddenInput.setAttribute("type", "hidden");
+          hiddenInput.setAttribute("name", key);
+          hiddenInput.setAttribute("value", value);
+
+          form.appendChild(hiddenInput);
+        });
+
+      hashedData = hashedData.slice(0, -1); // remove last "&"
+      console.log("Hash string:", hashedData);
+
+      // HMAC-SHA256 + base64
+      const data = CryptoJS.enc.Utf8.parse(hashedData);
+      const key = CryptoJS.enc.Utf8.parse(hashKey);
+      const hash = CryptoJS.HmacSHA256(data, key);
+      const base64Hash = CryptoJS.enc.Base64.stringify(hash);
+
+      document.getElementById("ekashu_hash_code").value = base64Hash;
+      console.log("Generated Hash:", base64Hash);
+    </script>
+  </body>
+</html>
